@@ -39,7 +39,12 @@ sub publish_entry {
     my $body = $args->{entry}->body_text;
 
     if ($self->conf->{templatize}) {
-        $body = $self->templatize('twitter.tt', $args);
+	     $body = $self->templatize('twitter.tt', $args);
+    }
+
+    my $maxlength = $self->conf->{maxlength} || 159;
+    if (length($body) > $maxlength) {
+        $body = substr($body, 0, $maxlength);
     }
 
     foreach my $line (split("\n", $body)) {
