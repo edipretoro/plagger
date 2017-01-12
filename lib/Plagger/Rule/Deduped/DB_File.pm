@@ -3,12 +3,14 @@ use strict;
 use base qw( Plagger::Rule::Deduped::Base );
 
 use DB_File;
+use DBM_Filter;
 
 sub init {
     my($self, $rule) = @_;
     $self->{path} = $rule->{path} || Plagger->context->cache->path_to('Deduped.db');
     $self->{db} = tie my %cache, 'DB_File', $self->{path}, O_RDWR|O_CREAT, 0666, $DB_HASH
-        or Plagger->context->error("Can't open DB_File $self->{path}: $!");
+			or Plagger->context->error("Can't open DB_File $self->{path}: $!");
+		$self->{db}->Filter_Push('utf8');
 }
 
 sub find_entry {
